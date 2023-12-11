@@ -73,14 +73,8 @@ class Performance(models.Model):
 class Ticket(models.Model):
     row = models.IntegerField()
     seat = models.IntegerField()
-    performance = models.ForeignKey(Performance,
-                                    on_delete=models.SET_NULL,
-                                    null=True,
-                                    related_name="ticket_performance")
-    reservation = models.ForeignKey(Reservation,
-                                    on_delete=models.SET_NULL,
-                                    null=True,
-                                    related_name="ticket_reservation")
+    performance = models.ForeignKey(Performance,on_delete=models.SET_NULL,null=True,related_name="ticket_performance")
+    reservation = models.ForeignKey(Reservation,on_delete=models.SET_NULL,null=True,related_name="ticket_reservation")
 
     class Meta:
         constraints = [

@@ -18,6 +18,12 @@ class ReservationViewSet(viewsets.ModelViewSet):
     queryset = Reservation.objects.all()
     serializer_class = ReservationSerializer
 
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
 
 class PerformanceViewSet(viewsets.ModelViewSet):
     queryset = Performance.objects.all()
@@ -27,9 +33,13 @@ class PerformanceViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = self.queryset
 
+        play = self.request.query_params.get("play")
+        if play:
+            play_ids = [int(x) for x in self.request.query_params.get("play").split(',')]
+            queryset = queryset.filter(play__id__in=play_ids)
         if self.action in ("retrieve", "list"):
             queryset = queryset.select_related("play", "theatre_hall")
-        return queryset
+        return queryset.distinct()
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -69,6 +79,10 @@ class PlayViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = self.queryset
 
+        title = self.request.query_params.get("title")
+
+        if title:
+            queryset = queryset.filter(title__icontains=title)
         if self.action in ("retrieve", "list"):
             queryset = queryset.prefetch_related("actor", "genre")
         return queryset
@@ -81,6 +95,11 @@ class PlayViewSet(viewsets.ModelViewSet):
         return PlaySerializer
 
 
-class TicketViewSet(viewsets.ModelViewSet):
-    queryset = Ticket.objects.all()
-    serializer_class = TicketSerializer
+# class TicketViewSet(viewsets.ModelViewSet):
+#     queryset = Ticket.objects.all()
+#     serializer_class = TicketSerializer
+#
+#     def get_queryset(self):
+#         return self.queryset.filter(reservation__user=self.request.user)
+#     def perform_create(self, serializer):
+#         serializer.save(user=self.request.user)
