@@ -2,6 +2,7 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, mixins
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from theatre.models import TheatreHall, Reservation, Actor, Genre, Play, Performance
 from theatre.permissions import IsAdminOrIfAuthenticatedReadOnly
@@ -13,14 +14,14 @@ from theatre.serializers import TheatreHallSerializer, ReservationSerializer, Ac
 class TheatreHallViewSet(viewsets.ModelViewSet):
     queryset = TheatreHall.objects.all()
     serializer_class = TheatreHallSerializer
-    authentication_classes = (TokenAuthentication,)
+    authentication_classes = (JWTAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
 class ReservationViewSet(viewsets.ModelViewSet):
     queryset = Reservation.objects.all()
     serializer_class = ReservationSerializer
-    authentication_classes = (TokenAuthentication,)
+    authentication_classes = (JWTAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get_queryset(self):
@@ -35,7 +36,7 @@ class ReservationViewSet(viewsets.ModelViewSet):
 class PerformanceViewSet(viewsets.ModelViewSet):
     queryset = Performance.objects.all()
     serializer_class = PerformanceSerializer
-    authentication_classes = (TokenAuthentication,)
+    authentication_classes = (JWTAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
@@ -73,14 +74,14 @@ class PerformanceViewSet(viewsets.ModelViewSet):
 class ActorViewSet(viewsets.ModelViewSet):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
-    authentication_classes = (TokenAuthentication,)
+    authentication_classes = (JWTAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
 class GenreViewSet(viewsets.ViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    authentication_classes = (TokenAuthentication,)
+    authentication_classes = (JWTAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def list(self, request):
@@ -99,7 +100,7 @@ class GenreViewSet(viewsets.ViewSet):
 class PlayViewSet(viewsets.ModelViewSet):
     queryset = Play.objects.all()
     serializer_class = PlaySerializer
-    authentication_classes = (TokenAuthentication,)
+    authentication_classes = (JWTAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get_queryset(self):
