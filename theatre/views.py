@@ -1,6 +1,6 @@
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, mixins
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from theatre.models import TheatreHall, Reservation, Actor, Genre, Play, Performance
@@ -21,9 +21,12 @@ class ReservationViewSet(viewsets.ModelViewSet):
     queryset = Reservation.objects.all()
     serializer_class = ReservationSerializer
     authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get_queryset(self):
-        return self.queryset.filter(user=self.request.user)
+        if self.action == "list":
+            return Reservation.objects.select_related("user").filter(user=self.request.user)
+        return self.queryset
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -36,7 +39,6 @@ class PerformanceViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
-    # N + 1 manytoOne
     def get_queryset(self):
         queryset = self.queryset
 
@@ -54,6 +56,18 @@ class PerformanceViewSet(viewsets.ModelViewSet):
         if self.action == "retrieve":
             return PerformanceDetailSerializer
         return PerformanceSerializer
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="play",
+                type=int,
+                description="Filter by play id"
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class ActorViewSet(viewsets.ModelViewSet):
@@ -88,7 +102,6 @@ class PlayViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
-    # N + 1 Manytomany
     def get_queryset(self):
         queryset = self.queryset
 
@@ -107,6 +120,17 @@ class PlayViewSet(viewsets.ModelViewSet):
             return PlayDetailSerializer
         return PlaySerializer
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="title",
+                description="Filter by title",
+                type=str,
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 # class TicketViewSet(viewsets.ModelViewSet):
 #     queryset = Ticket.objects.all()
