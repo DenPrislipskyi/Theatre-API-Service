@@ -1,22 +1,26 @@
-from django.shortcuts import render
-from rest_framework import viewsets, mixins, status
+from rest_framework import viewsets, mixins
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework.viewsets import GenericViewSet
 
-from theatre.models import TheatreHall, Reservation, Actor, Genre, Play, Performance, Ticket
+from theatre.models import TheatreHall, Reservation, Actor, Genre, Play, Performance
+from theatre.permissions import IsAdminOrIfAuthenticatedReadOnly
 from theatre.serializers import TheatreHallSerializer, ReservationSerializer, ActorSerializer, GenreSerializer, \
-    PlaySerializer, PerformanceSerializer, TicketSerializer, PerformanceListSerializer, \
+    PlaySerializer, PerformanceSerializer, PerformanceListSerializer, \
     PlayDetailSerializer, PerformanceDetailSerializer, PlayListSerializer
 
 
 class TheatreHallViewSet(viewsets.ModelViewSet):
     queryset = TheatreHall.objects.all()
     serializer_class = TheatreHallSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
 class ReservationViewSet(viewsets.ModelViewSet):
     queryset = Reservation.objects.all()
     serializer_class = ReservationSerializer
+    authentication_classes = (TokenAuthentication,)
 
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)
@@ -28,6 +32,9 @@ class ReservationViewSet(viewsets.ModelViewSet):
 class PerformanceViewSet(viewsets.ModelViewSet):
     queryset = Performance.objects.all()
     serializer_class = PerformanceSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+
 
     # N + 1 manytoOne
     def get_queryset(self):
@@ -52,11 +59,15 @@ class PerformanceViewSet(viewsets.ModelViewSet):
 class ActorViewSet(viewsets.ModelViewSet):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
 class GenreViewSet(viewsets.ViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def list(self, request):
         queryset = self.queryset
@@ -74,6 +85,8 @@ class GenreViewSet(viewsets.ViewSet):
 class PlayViewSet(viewsets.ModelViewSet):
     queryset = Play.objects.all()
     serializer_class = PlaySerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     # N + 1 Manytomany
     def get_queryset(self):
