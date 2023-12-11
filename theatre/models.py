@@ -26,6 +26,10 @@ class Actor(models.Model):
     first_name = models.CharField(max_length=220)
     last_name = models.CharField(max_length=225)
 
+    @property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
     class Meta:
         ordering = ["first_name"]
 
@@ -51,7 +55,8 @@ class Play(models.Model):
 
 
 class Performance(models.Model):
-    play = models.ForeignKey(Play, on_delete=models.CASCADE,
+    play = models.ForeignKey(Play,
+                             on_delete=models.CASCADE,
                              related_name="performance_play")
     theatre_hall = models.ForeignKey(TheatreHall,
                                      on_delete=models.CASCADE,
@@ -102,4 +107,4 @@ class Ticket(models.Model):
                 save(force_insert, force_update, using, update_fields))
 
     def __str__(self):
-        return f"{self.performance.play.title}, {self.row}, {self.seat}"
+        return f"{self.performance.play.title}, row: {self.row}, seat: {self.seat}"
