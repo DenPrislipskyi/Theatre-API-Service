@@ -14,9 +14,9 @@ class TheatreHall(models.Model):
 
 class Reservation(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE,
-                             related_name="reservation")
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="reservation"
+    )
 
     def __str__(self):
         return f"{self.user.username}, created_at: {self.created_at}"
@@ -88,8 +88,7 @@ class Ticket(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=["row", "seat"],
-                                    name="unique_ticket")
+            models.UniqueConstraint(fields=["row", "seat"], name="unique_ticket")
         ]
 
     def clean(self) -> None:

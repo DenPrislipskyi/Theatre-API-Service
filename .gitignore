@@ -53,7 +53,7 @@ MANIFEST
 pip-log.txt
 pip-delete-this-directory.txt
 
-# Unit test / coverage reports
+# Unit tests / coverage reports
 htmlcov/
 .tox/
 .nox/
@@ -134,9 +134,9 @@ celerybeat.pid
 # Environments
 .env
 .venv
-env/
+.env/
 venv/
-ENV/
+.env/
 env.bak/
 venv.bak/
 
@@ -297,7 +297,7 @@ fabric.properties
 
 # Installer logs
 
-# Unit test / coverage reports
+# Unit tests / coverage reports
 
 # Translations
 

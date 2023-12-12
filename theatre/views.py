@@ -3,12 +3,7 @@ from rest_framework import viewsets, mixins
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from theatre.models import (TheatreHall,
-                            Reservation,
-                            Actor,
-                            Genre,
-                            Play,
-                            Performance)
+from theatre.models import TheatreHall, Reservation, Actor, Genre, Play, Performance
 from theatre.permissions import IsAdminOrIfAuthenticatedReadOnly
 from theatre.serializers import (
     TheatreHallSerializer,
@@ -21,14 +16,28 @@ from theatre.serializers import (
     PlayDetailSerializer,
     PerformanceDetailSerializer,
     PlayListSerializer,
+    ActorListSerializer,
+    ActorDetailSerializer,
 )
 
 
-class TheatreHallViewSet(viewsets.ModelViewSet):
+class TheatreHallViewSet(viewsets.ViewSet):
     queryset = TheatreHall.objects.all()
     serializer_class = TheatreHallSerializer
     authentication_classes = (JWTAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+
+    def list(self, request):
+        queryset = self.queryset
+        serializer = self.serializer_class(queryset, many=True)
+        return Response(serializer.data)
+
+    def create(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
 
 
 class ReservationViewSet(viewsets.ModelViewSet):
@@ -76,9 +85,7 @@ class PerformanceViewSet(viewsets.ModelViewSet):
 
     @extend_schema(
         parameters=[
-            OpenApiParameter(name="play",
-                             type=int,
-                             description="Filter by play id"),
+            OpenApiParameter(name="play", type=int, description="Filter by play id"),
         ]
     )
     def list(self, request, *args, **kwargs):
@@ -90,6 +97,13 @@ class ActorViewSet(viewsets.ModelViewSet):
     serializer_class = ActorSerializer
     authentication_classes = (JWTAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return ActorListSerializer
+        if self.action == "retrieve":
+            return ActorDetailSerializer
+        return ActorSerializer
 
 
 class GenreViewSet(viewsets.ViewSet):
