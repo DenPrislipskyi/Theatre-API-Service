@@ -1,14 +1,27 @@
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, mixins
-from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from theatre.models import TheatreHall, Reservation, Actor, Genre, Play, Performance
+from theatre.models import (TheatreHall,
+                            Reservation,
+                            Actor,
+                            Genre,
+                            Play,
+                            Performance)
 from theatre.permissions import IsAdminOrIfAuthenticatedReadOnly
-from theatre.serializers import TheatreHallSerializer, ReservationSerializer, ActorSerializer, GenreSerializer, \
-    PlaySerializer, PerformanceSerializer, PerformanceListSerializer, \
-    PlayDetailSerializer, PerformanceDetailSerializer, PlayListSerializer
+from theatre.serializers import (
+    TheatreHallSerializer,
+    ReservationSerializer,
+    ActorSerializer,
+    GenreSerializer,
+    PlaySerializer,
+    PerformanceSerializer,
+    PerformanceListSerializer,
+    PlayDetailSerializer,
+    PerformanceDetailSerializer,
+    PlayListSerializer,
+)
 
 
 class TheatreHallViewSet(viewsets.ModelViewSet):
@@ -26,7 +39,9 @@ class ReservationViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.action == "list":
-            return Reservation.objects.select_related("user").filter(user=self.request.user)
+            return Reservation.objects.select_related("user").filter(
+                user=self.request.user
+            )
         return self.queryset
 
     def perform_create(self, serializer):
@@ -39,13 +54,14 @@ class PerformanceViewSet(viewsets.ModelViewSet):
     authentication_classes = (JWTAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
-
     def get_queryset(self):
         queryset = self.queryset
 
         play = self.request.query_params.get("play")
         if play:
-            play_ids = [int(x) for x in self.request.query_params.get("play").split(',')]
+            play_ids = [
+                int(x) for x in self.request.query_params.get("play").split(",")
+            ]
             queryset = queryset.filter(play__id__in=play_ids)
         if self.action in ("retrieve", "list"):
             queryset = queryset.select_related("play", "theatre_hall")
@@ -60,11 +76,9 @@ class PerformanceViewSet(viewsets.ModelViewSet):
 
     @extend_schema(
         parameters=[
-            OpenApiParameter(
-                name="play",
-                type=int,
-                description="Filter by play id"
-            ),
+            OpenApiParameter(name="play",
+                             type=int,
+                             description="Filter by play id"),
         ]
     )
     def list(self, request, *args, **kwargs):
@@ -132,6 +146,7 @@ class PlayViewSet(viewsets.ModelViewSet):
     )
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
+
 
 # class TicketViewSet(viewsets.ModelViewSet):
 #     queryset = Ticket.objects.all()

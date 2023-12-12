@@ -1,12 +1,14 @@
 from django.contrib import admin
 
-from theatre.models import (Ticket,
-                            Performance,
-                            Play,
-                            Genre,
-                            Actor,
-                            Reservation,
-                            TheatreHall)
+from theatre.models import (
+    Ticket,
+    Performance,
+    Play,
+    Genre,
+    Actor,
+    Reservation,
+    TheatreHall,
+)
 
 
 class TicketInline(admin.TabularInline):
@@ -16,7 +18,7 @@ class TicketInline(admin.TabularInline):
 
 @admin.register(Reservation)
 class ReservationAdmin(admin.ModelAdmin):
-    inlines = (TicketInline, )
+    inlines = (TicketInline,)
 
 
 admin.site.register(TheatreHall)
