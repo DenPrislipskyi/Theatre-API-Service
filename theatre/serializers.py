@@ -33,7 +33,7 @@ class PlaySerializer(serializers.ModelSerializer):
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
-        fields = ("name",)
+        fields = ("id", "name")
 
 
 class GenreListSerializer(GenreSerializer):
@@ -43,7 +43,7 @@ class GenreListSerializer(GenreSerializer):
 
     class Meta:
         model = Genre
-        fields = ("id", "name", "plays_title")
+        fields = ("name", "plays_title")
 
 
 class ActorListSerializer(ActorSerializer):

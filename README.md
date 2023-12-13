@@ -67,7 +67,9 @@ python manage.py createsuperuser
 ```
 ### Go to site: http://127.0.0.1:8000/api/theatre/
 
-### [**Documentation**](http://127.0.0.1:8000/api/doc/swagger/)
+### **Documentation**
+#### http://127.0.0.1:8000/api/doc/swagger/
+
 ![Swagger](photo_readme/Swagger.png)
 
 ### [**API**](http://127.0.0.1:8000/api/theatre/)

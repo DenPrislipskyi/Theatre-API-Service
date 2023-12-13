@@ -1,3 +1,4 @@
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from theatre.permissions import IsAdminOrIfAuthenticatedReadOnly
@@ -122,11 +123,14 @@ class GenreViewSet(viewsets.ViewSet):
     serializer_class = GenreSerializer
     authentication_classes = (JWTAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+    pagination_class = LimitOffsetPagination
 
     def list(self, request):
         queryset = self.queryset
-        serializer = self.serializer_class(queryset, many=True)
-        return Response(serializer.data)
+        paginator = self.pagination_class()
+        paginated_queryset = paginator.paginate_queryset(queryset, request)
+        serializer = self.serializer_class(paginated_queryset, many=True)
+        return paginator.get_paginated_response(serializer.data)
 
     def create(self, request):
         serializer = self.serializer_class(data=request.data)
