@@ -1,16 +1,16 @@
-import tempfile
-import os
-
-from PIL import Image
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 
-from rest_framework.test import APIClient, APITestCase
+from rest_framework.test import APIClient
 from rest_framework import status
 
-from theatre.models import Play, Performance, TheatreHall, Genre, Actor, Reservation
-from theatre.serializers import PlayDetailSerializer, PlayListSerializer
+from theatre.models import (Play,
+                            Performance,
+                            TheatreHall,
+                            Genre,
+                            Actor)
+from theatre.serializers import PlayDetailSerializer
 
 
 PLAY_URL = reverse("theatre:play-list")
@@ -44,7 +44,9 @@ def sample_actor(**params):
 
 
 def sample_performance(**params):
-    theatre_hall = TheatreHall.objects.create(name="Big", rows=20, seats_in_row=20)
+    theatre_hall = TheatreHall.objects.create(name="Big",
+                                              rows=20,
+                                              seats_in_row=20)
 
     defaults = {
         "show_time": "2020-01-01 00:00:00",

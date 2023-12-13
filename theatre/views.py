@@ -1,10 +1,18 @@
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-from rest_framework import viewsets, mixins
-from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
-
-from theatre.models import TheatreHall, Reservation, Actor, Genre, Play, Performance
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from theatre.permissions import IsAdminOrIfAuthenticatedReadOnly
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import viewsets
+
+
+from theatre.models import (TheatreHall,
+                            Reservation,
+                            Actor,
+                            Genre,
+                            Play,
+                            Performance)
+
 from theatre.serializers import (
     TheatreHallSerializer,
     ReservationSerializer,
@@ -44,7 +52,7 @@ class ReservationViewSet(viewsets.ModelViewSet):
     queryset = Reservation.objects.all()
     serializer_class = ReservationSerializer
     authentication_classes = (JWTAuthentication,)
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         if self.action == "list":
@@ -69,7 +77,8 @@ class PerformanceViewSet(viewsets.ModelViewSet):
         play = self.request.query_params.get("play")
         if play:
             play_ids = [
-                int(x) for x in self.request.query_params.get("play").split(",")
+                int(x) for x in self.request.query_params.
+                get("play").split(",")
             ]
             queryset = queryset.filter(play__id__in=play_ids)
         if self.action in ("retrieve", "list"):
@@ -85,7 +94,9 @@ class PerformanceViewSet(viewsets.ModelViewSet):
 
     @extend_schema(
         parameters=[
-            OpenApiParameter(name="play", type=int, description="Filter by play id"),
+            OpenApiParameter(name="play",
+                             type=int,
+                             description="Filter by play id"),
         ]
     )
     def list(self, request, *args, **kwargs):
