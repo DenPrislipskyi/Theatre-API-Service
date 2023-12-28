@@ -1,4 +1,4 @@
-FROM python:3.11-slim-buster
+FROM python:3.11-slim
 LABEL maintainer="den.prislipskyi@gmail.com"
 
 ENV PYTHONUNBUFFERED 1
@@ -10,9 +10,6 @@ COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
 COPY . .
-
-RUN apt-get update \
-    && apt-get -y install libpq-dev gcc
 
 RUN adduser \
     --disabled-password \

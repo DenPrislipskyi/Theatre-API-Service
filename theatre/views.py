@@ -68,7 +68,6 @@ class ReservationViewSet(viewsets.ModelViewSet):
 
 class PerformanceViewSet(viewsets.ModelViewSet):
     queryset = Performance.objects.all()
-    serializer_class = PerformanceSerializer
     authentication_classes = (JWTAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
@@ -78,7 +77,7 @@ class PerformanceViewSet(viewsets.ModelViewSet):
         play = self.request.query_params.get("play")
         if play:
             play_ids = [
-                int(x) for x in self.request.query_params.
+                int(play_id) for play_id in self.request.query_params.
                 get("play").split(",")
             ]
             queryset = queryset.filter(play__id__in=play_ids)
@@ -106,7 +105,6 @@ class PerformanceViewSet(viewsets.ModelViewSet):
 
 class ActorViewSet(viewsets.ModelViewSet):
     queryset = Actor.objects.all()
-    serializer_class = ActorSerializer
     authentication_classes = (JWTAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
@@ -142,7 +140,6 @@ class GenreViewSet(viewsets.ViewSet):
 
 class PlayViewSet(viewsets.ModelViewSet):
     queryset = Play.objects.all()
-    serializer_class = PlaySerializer
     authentication_classes = (JWTAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
@@ -175,13 +172,3 @@ class PlayViewSet(viewsets.ModelViewSet):
     )
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
-
-
-# class TicketViewSet(viewsets.ModelViewSet):
-#     queryset = Ticket.objects.all()
-#     serializer_class = TicketSerializer
-#
-#     def get_queryset(self):
-#         return self.queryset.filter(reservation__user=self.request.user)
-#     def perform_create(self, serializer):
-#         serializer.save(user=self.request.user)

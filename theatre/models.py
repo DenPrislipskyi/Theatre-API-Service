@@ -16,7 +16,7 @@ class Reservation(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE,
-                             related_name="reservation")
+                             related_name="reservations")
 
     def __str__(self):
         return f"{self.user.email}, created_at: {self.created_at}"
@@ -47,8 +47,8 @@ class Genre(models.Model):
 class Play(models.Model):
     title = models.CharField(max_length=355)
     description = models.TextField(null=True, blank=True)
-    actor = models.ManyToManyField(Actor, related_name="actor_plays")
-    genre = models.ManyToManyField(Genre, related_name="genre_plays")
+    actor = models.ManyToManyField(Actor, related_name="plays")
+    genre = models.ManyToManyField(Genre, related_name="plays")
 
     def __str__(self):
         return self.title
@@ -56,10 +56,10 @@ class Play(models.Model):
 
 class Performance(models.Model):
     play = models.ForeignKey(
-        Play, on_delete=models.CASCADE, related_name="performance_play"
+        Play, on_delete=models.CASCADE, related_name="performances"
     )
     theatre_hall = models.ForeignKey(
-        TheatreHall, on_delete=models.CASCADE, related_name="performance"
+        TheatreHall, on_delete=models.CASCADE, related_name="performances"
     )
     show_time = models.DateTimeField(verbose_name="Date and Time of Show")
 
@@ -77,13 +77,13 @@ class Ticket(models.Model):
         Performance,
         on_delete=models.SET_NULL,
         null=True,
-        related_name="ticket_performance",
+        related_name="tickets",
     )
     reservation = models.ForeignKey(
         Reservation,
         on_delete=models.SET_NULL,
         null=True,
-        related_name="ticket_reservation",
+        related_name="tickets",
     )
 
     class Meta:

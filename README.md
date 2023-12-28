@@ -39,32 +39,29 @@ python -m venv venv
 source venv/scripts/activate
 ```
 
-Create a `.env` file and add the following configurations:
+Create a `.env` file and add the following configurations using the command:
+
+For macOS:
 ```
-POSTGRES_HOST=db
-POSTGRES_DB=db
-POSTGRES_USER=postgresuser
-POSTGRES_PASSWORD=postgrespassword
+cp .env-sample .env
 ```
+
+For windows:
+```
+copy .env-sample .env
+```
+
 Once everything is set up, proceed to run the application using Docker Compose:
 ```
 docker-compose up --build
 ```
 
-### Create a Default User access the following URL:
-http://127.0.0.1:8000/api/user/register/
+You can use following superuser (or create another one by yourself)
+```
+email: admin@admin.com
+password: admin
+```
 
-Ordinary users are restricted to creating reservations only and have read-only access to all other API endpoints.
-
-
-### Create Superuser
-Execute the following commands:
-```
-docker exec -t your_container_id bash
-```
-```
-python manage.py createsuperuser
-```
 ### Go to site: http://127.0.0.1:8000/api/theatre/
 
 ### **Documentation**
